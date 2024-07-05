@@ -6,6 +6,8 @@ import lombok.Data;
 public class House {
 
     private Long id;
+
     private String name;
+
     private String address;
 }

@@ -7,7 +7,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class HouseService {
@@ -20,15 +19,16 @@ public class HouseService {
 
     public Mono<List<House>> getAllHouses() {
         return webClient.get()
-                .uri("/house/all")
+                .uri("/house/list")
                 .retrieve()
                 .bodyToMono(House[].class)
                 .map(Arrays::asList);
     }
 
-    public String convertHousesToString(List<House> houses) {
-        return houses.stream()
-                .map(House::toString)
-                .collect(Collectors.joining("\n"));
+    public Mono<House> getHouseById(Long id) {
+        return webClient.get()
+                .uri("/house/" + id)
+                .retrieve()
+                .bodyToMono(House.class);
     }
 }
