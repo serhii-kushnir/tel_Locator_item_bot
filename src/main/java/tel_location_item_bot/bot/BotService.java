@@ -51,6 +51,22 @@ public class BotService {
             }
         }
 
+        if (message.startsWith("/house/delete/")) {
+            String[] parts = message.substring("/house/delete/".length()).split(";");
+            if (parts.length != 1) {
+                return Mono.just("Невірний формат команди. Використовуйте: /house/delete/[id]");
+            }
+
+            try {
+                Long id = Long.parseLong(parts[0].trim());
+
+                return houseService.deleteHouseById(id)
+                        .then(Mono.just("Будинок з ID " + id + " успішно видалено."));
+            } catch (NumberFormatException e) {
+                return Mono.just("Некоректний формат ID.");
+            }
+        }
+
         if (message.startsWith("/house/create ")) {
             String[] parts = message.substring(14).split(";");
             if (parts.length != 2) {

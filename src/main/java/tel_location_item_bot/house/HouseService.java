@@ -50,4 +50,10 @@ public class HouseService {
                 .bodyToMono(House.class);
     }
 
+    public Mono<Void> deleteHouseById(Long id) {
+        return webClient.post()
+                .uri(PREFIX_HOUSE + "delete/" + id)
+                .retrieve()
+                .bodyToMono(Void.class);
+    }
 }
