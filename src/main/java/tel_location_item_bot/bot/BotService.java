@@ -25,6 +25,21 @@ public class BotService {
             return Mono.just("Вітаю! Це ваш Telegram бот для управлінням предметів");
         }
 
+        if (message.startsWith("/house/create ")) {
+            String[] parts = message.substring(14).split(";");
+            if (parts.length != 2) {
+                return Mono.just("Невірний формат команди. Використовуйте: /house/create [name];[address]");
+            }
+
+            House newHouse = new House();
+            newHouse.setName(parts[0].trim());
+            newHouse.setAddress(parts[1].trim());
+
+            return houseService.createHouse(newHouse)
+                    .map(House::toString)
+                    .defaultIfEmpty("Не вдалося створити будинок.");
+        }
+
         if (message.startsWith("/house/list")) {
             return houseService.getAllHouses()
                     .map(houses -> houses.stream()
