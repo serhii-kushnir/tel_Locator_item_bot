@@ -25,6 +25,32 @@ public class BotService {
             return Mono.just("Вітаю! Це ваш Telegram бот для управлінням предметів");
         }
 
+        if (message.startsWith("/house/edit/")) {
+
+            String[] parts = message.substring("/house/edit/".length()).split(";");
+
+            if (parts.length != 3) {
+                return Mono.just("Невірний формат команди. Використовуйте: /house/edit/[id];[name];[address]");
+            }
+
+            try {
+                Long id = Long.parseLong(parts[0].trim());
+                String name = parts[1].trim();
+                String address = parts[2].trim();
+
+                House editedHouse = new House();
+                editedHouse.setId(id);
+                editedHouse.setName(name);
+                editedHouse.setAddress(address);
+
+                return houseService.editHouseById(editedHouse, id)
+                        .map(updatedHouse -> "Будинок з ID " + updatedHouse.getId() + " успішно відредаговано.")
+                        .defaultIfEmpty("Не вдалося знайти будинок для редагування.");
+            } catch (NumberFormatException e) {
+                return Mono.just("Некоректний формат ID.");
+            }
+        }
+
         if (message.startsWith("/house/create ")) {
             String[] parts = message.substring(14).split(";");
             if (parts.length != 2) {

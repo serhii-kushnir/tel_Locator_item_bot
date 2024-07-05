@@ -19,6 +19,14 @@ public class HouseService {
         this.webClient = webClient;
     }
 
+    public Mono<House> createHouse(House house) {
+        return webClient.post()
+                .uri(PREFIX_HOUSE + "create")
+                .body(Mono.just(house), House.class)
+                .retrieve()
+                .bodyToMono(House.class);
+    }
+
     public Mono<List<House>> getAllHouses() {
         return webClient.get()
                 .uri(PREFIX_HOUSE + "list")
@@ -34,9 +42,9 @@ public class HouseService {
                 .bodyToMono(House.class);
     }
 
-    public Mono<House> createHouse(House house) {
+    public Mono<House> editHouseById(House house, Long id) {
         return webClient.post()
-                .uri(PREFIX_HOUSE + "create")
+                .uri(PREFIX_HOUSE + "edit/" + id)
                 .body(Mono.just(house), House.class)
                 .retrieve()
                 .bodyToMono(House.class);
