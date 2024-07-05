@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: tel_locator_item_bot
+
+telegram:
+  bot:
+    username: ${TELEGRAM_BOT_USERNAME}
+    token: ${TELEGRAM_BOT_TOKEN}
