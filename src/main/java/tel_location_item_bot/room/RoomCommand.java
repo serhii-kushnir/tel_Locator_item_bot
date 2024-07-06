@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import reactor.core.publisher.Mono;
-import tel_location_item_bot.house.HouseService;
 
 import java.util.stream.Collectors;
 
@@ -12,15 +11,13 @@ import java.util.stream.Collectors;
 public class RoomCommand {
 
     private final RoomService roomService;
-    private final HouseService houseService;
 
     @Autowired
-    public RoomCommand(RoomService roomService, HouseService houseService) {
+    public RoomCommand(RoomService roomService) {
         this.roomService = roomService;
-        this.houseService = houseService;
     }
 
-    public Mono<String> getListRooms() {
+    public Mono<String> getList() {
         return roomService.getListRooms()
                 .map(rooms -> rooms.stream()
                         .map(Room::toString)
@@ -50,7 +47,7 @@ public class RoomCommand {
             return Mono.just("Невірний формат команди. Використовуйте: /room/create [name];[house id]");
         }
 
-        Long houseId;
+        long houseId;
         try {
             houseId = Long.parseLong(parts[1].trim());
         } catch (NumberFormatException e) {
@@ -64,5 +61,35 @@ public class RoomCommand {
         return roomService.createRoom(newRoomDTO)
                 .map(room -> "Кімната створена: " + room.toString())
                 .defaultIfEmpty("Не вдалося створити кімнату.");
+    }
+
+    public Mono<String> edit(final String message) {
+        String[] parts = message.substring("/room/edit ".length()).split(";");
+        if (parts.length != 3) {
+            return Mono.just("Невірний формат команди. Використовуйте: /room/edit [id];[name];[house id]");
+        }
+
+        Long roomId;
+        try {
+            roomId = Long.parseLong(parts[0].trim());
+        } catch (NumberFormatException e) {
+            return Mono.just("Невірний формат ID кімнати.");
+        }
+
+        long houseId;
+        try {
+            houseId = Long.parseLong(parts[2].trim());
+        } catch (NumberFormatException e) {
+            return Mono.just("Невірний формат ID дому.");
+        }
+
+        RoomDTO editedRoomDTO = new RoomDTO();
+        editedRoomDTO.setId(roomId);
+        editedRoomDTO.setName(parts[1].trim());
+        editedRoomDTO.setHouseId(houseId);
+
+        return roomService.editRoomById(editedRoomDTO, roomId)
+                .map(room -> "Кімната з ID " + room.getId() + " відредагована: " + room.toString())
+                .defaultIfEmpty("Не вдалося знайти кімнату для редагування.");
     }
 }
