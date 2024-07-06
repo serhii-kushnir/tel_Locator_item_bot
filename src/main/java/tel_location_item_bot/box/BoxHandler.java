@@ -25,9 +25,9 @@ public class BoxHandler {
         return switch (command) {
             case PREFIX_BOX + "list" -> boxCommand.getList();
             case PREFIX_BOX + "create" -> boxCommand.create("/box/create " + arguments);
-//            case "/room" -> boxCommand.getById("/room " + arguments);
-//            case PREFIX_BOX + "edit" -> boxCommand.edit("/room/edit " + arguments);
-//            case PREFIX_BOX + "delete" -> boxCommand.delete("/room/delete " + arguments);
+            case "/box" -> boxCommand.getById("/box " + arguments);
+            case PREFIX_BOX + "edit" -> boxCommand.edit("/box/edit " + arguments);
+//            case PREFIX_BOX + "delete" -> boxCommand.delete("/box/delete " + arguments);
             default -> Mono.just("Невідома команда для /box");
         };
     }

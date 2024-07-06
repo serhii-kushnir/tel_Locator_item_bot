@@ -45,4 +45,52 @@ public class BoxCommand {
                         .map(Box::toString)
                         .collect(Collectors.joining("\n")));
     }
+
+    public Mono<String> getById(final String message) {
+        String[] parts = message.substring("/box".length()).split(";");
+        if (parts.length != 1) {
+            return Mono.just("Невірний формат команди. Використовуйте: /box [id]");
+        }
+
+        try {
+            Long id = Long.parseLong(parts[0].trim());
+
+            return boxService.getBoxById(id)
+                    .map(Box::toString)
+                    .defaultIfEmpty("Комірка з ID " + id + " не знайдена.");
+        } catch (NumberFormatException e) {
+            return Mono.just("Некоректний формат ID.");
+        }
+    }
+
+    public Mono<String> edit(final String message) {
+        String[] parts = message.substring("/box/edit ".length()).split(";");
+        if (parts.length != 3) {
+            return Mono.just("Невірний формат команди. Використовуйте: /box/edit [id];[name];[room id]");
+        }
+
+        Long boxId;
+        try {
+            boxId = Long.parseLong(parts[0].trim());
+        } catch (NumberFormatException e) {
+            return Mono.just("Невірний формат ID боксу.");
+        }
+
+        long roomId;
+        try {
+            roomId = Long.parseLong(parts[2].trim());
+        } catch (NumberFormatException e) {
+            return Mono.just("Невірний формат ID кімнати.");
+        }
+
+        BoxDTO editedBoxDTO = new BoxDTO();
+        editedBoxDTO.setId(boxId);
+        editedBoxDTO.setName(parts[1].trim());
+        editedBoxDTO.setRoomId(roomId);
+
+        return boxService.editBoxById(editedBoxDTO, boxId)
+                .map(box -> "Комірка з ID " + box.getId() + " відредагована: " + box.toString())
+                .defaultIfEmpty("Не вдалося знайти комірку для редагування.");
+    }
+
 }
