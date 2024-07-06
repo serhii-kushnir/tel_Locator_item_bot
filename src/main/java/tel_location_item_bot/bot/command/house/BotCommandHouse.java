@@ -1,4 +1,4 @@
-package tel_location_item_bot.bot.command;
+package tel_location_item_bot.bot.command.house;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -7,6 +7,8 @@ import reactor.core.publisher.Mono;
 
 import tel_location_item_bot.house.House;
 import tel_location_item_bot.house.HouseService;
+
+import java.util.stream.Collectors;
 
 @Component
 public class BotCommandHouse {
@@ -59,6 +61,7 @@ public class BotCommandHouse {
 
     public Mono<String> delete(final String message) {
         String[] parts = message.substring("/house/delete ".length()).split(";");
+
         if (parts.length != 1) {
             return Mono.just("Невірний формат команди. Використовуйте: /house/delete [id]");
         }
@@ -89,5 +92,12 @@ public class BotCommandHouse {
         } catch (NumberFormatException e) {
             return Mono.just("Некоректний формат ID.");
         }
+    }
+
+    public Mono<String> getListHouse() {
+        return houseService.getListHouses()
+                    .map(houses -> houses.stream()
+                            .map(House::toString)
+                            .collect(Collectors.joining("\n")));
     }
 }

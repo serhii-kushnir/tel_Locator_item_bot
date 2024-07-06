@@ -27,7 +27,7 @@ public class HouseService {
                 .bodyToMono(House.class);
     }
 
-    public Mono<List<House>> getAllHouses() {
+    public Mono<List<House>> getListHouses() {
         return webClient.get()
                 .uri(PREFIX_HOUSE + "list")
                 .retrieve()

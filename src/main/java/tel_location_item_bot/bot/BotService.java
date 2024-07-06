@@ -4,16 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import reactor.core.publisher.Mono;
-import tel_location_item_bot.bot.command.BotCommandHouseHandler;
+import tel_location_item_bot.bot.command.house.BotCommandHouseHandler;
+import tel_location_item_bot.bot.command.room.BotCommandRoomHandler;
 
 @Service
 public class BotService {
 
     private final BotCommandHouseHandler botCommandHouseHandler;
+    private final BotCommandRoomHandler botCommandRoomHandler;
 
     @Autowired
-    public BotService(BotCommandHouseHandler botCommandHouseHandler) {
+    public BotService(final BotCommandHouseHandler botCommandHouseHandler, final BotCommandRoomHandler botCommandRoomHandler) {
         this.botCommandHouseHandler = botCommandHouseHandler;
+        this.botCommandRoomHandler = botCommandRoomHandler;
     }
 
     public Mono<String> processMessage(final String messageText) {
@@ -25,7 +28,11 @@ public class BotService {
             return botCommandHouseHandler.handler(messageText);
         }
 
-        return Mono.just("Невідома команда.");
+        if (messageText.startsWith("/room")) {
+            return botCommandRoomHandler.handler(messageText);
+        }
+
+        return Mono.just("Невідома команда");
     }
 
 
