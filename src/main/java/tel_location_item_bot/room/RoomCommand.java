@@ -1,0 +1,68 @@
+package tel_location_item_bot.room;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import reactor.core.publisher.Mono;
+import tel_location_item_bot.house.HouseService;
+
+import java.util.stream.Collectors;
+
+@Component
+public class RoomCommand {
+
+    private final RoomService roomService;
+    private final HouseService houseService;
+
+    @Autowired
+    public RoomCommand(RoomService roomService, HouseService houseService) {
+        this.roomService = roomService;
+        this.houseService = houseService;
+    }
+
+    public Mono<String> getListRooms() {
+        return roomService.getListRooms()
+                .map(rooms -> rooms.stream()
+                        .map(Room::toString)
+                        .collect(Collectors.joining("\n")));
+    }
+
+    public Mono<String> getById(final String message) {
+        String[] parts = message.substring("/room".length()).split(";");
+        if (parts.length != 1) {
+            return Mono.just("Невірний формат команди. Використовуйте: /house [id]");
+        }
+
+        try {
+            Long id = Long.parseLong(parts[0].trim());
+
+            return roomService.getRoomById(id)
+                    .map(Room::toString)
+                    .defaultIfEmpty("Кімната з ID " + id + " не знайдена.");
+        } catch (NumberFormatException e) {
+            return Mono.just("Некоректний формат ID.");
+        }
+    }
+
+    public Mono<String> create(final String message) {
+        String[] parts = message.substring("/room/create ".length()).split(";");
+        if (parts.length != 2) {
+            return Mono.just("Невірний формат команди. Використовуйте: /room/create [name];[house id]");
+        }
+
+        Long houseId;
+        try {
+            houseId = Long.parseLong(parts[1].trim());
+        } catch (NumberFormatException e) {
+            return Mono.just("Невірний формат ID дому.");
+        }
+
+        RoomDTO newRoomDTO = new RoomDTO();
+        newRoomDTO.setName(parts[0].trim());
+        newRoomDTO.setHouseId(houseId);
+
+        return roomService.createRoom(newRoomDTO)
+                .map(room -> "Кімната створена: " + room.toString())
+                .defaultIfEmpty("Не вдалося створити кімнату.");
+    }
+}

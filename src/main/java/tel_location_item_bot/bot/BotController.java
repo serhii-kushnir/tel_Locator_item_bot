@@ -15,7 +15,7 @@ public class BotController extends TelegramLongPollingBot {
     private BotConfig botConfig;
 
     @Autowired
-    private BotService botService;
+    private BotHandler botHandler;
     
     @Override
     public String getBotToken() {
@@ -28,19 +28,19 @@ public class BotController extends TelegramLongPollingBot {
     }
 
     @Override
-    public void onUpdateReceived(Update update) {
+    public void onUpdateReceived(final Update update) {
         long chatId;
 
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
             chatId = update.getMessage().getChatId();
 
-            String response = botService.processMessage(messageText).block();
+            String response = botHandler.processMessage(messageText).block();
             sendTextMessage(chatId, response);
         }
     }
 
-    private void sendTextMessage(long chatId, String text) {
+    private void sendTextMessage(final long chatId, final String text) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(text);
