@@ -28,7 +28,7 @@ public class BotController extends TelegramLongPollingBot {
     }
 
     @Override
-    public void onUpdateReceived(Update update) {
+    public void onUpdateReceived(final Update update) {
         long chatId;
 
         if (update.hasMessage() && update.getMessage().hasText()) {
@@ -40,7 +40,7 @@ public class BotController extends TelegramLongPollingBot {
         }
     }
 
-    private void sendTextMessage(long chatId, String text) {
+    private void sendTextMessage(final long chatId, final String text) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(text);

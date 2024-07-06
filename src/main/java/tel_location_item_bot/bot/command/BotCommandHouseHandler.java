@@ -17,12 +17,12 @@ public class BotCommandHouseHandler {
     private final BotCommandHouse botCommandHouse;
 
     @Autowired
-    public BotCommandHouseHandler(HouseService houseService, BotCommandHouse botCommandHouse) {
+    public BotCommandHouseHandler(final HouseService houseService, final BotCommandHouse botCommandHouse) {
         this.houseService = houseService;
         this.botCommandHouse = botCommandHouse;
     }
 
-    public Mono<String> handler(String messageText) {
+    public Mono<String> handler(final String messageText) {
         String[] parts = messageText.split(" ", 2);
         String command = parts[0];
         String arguments = parts.length > 1 ? parts[1] : "";

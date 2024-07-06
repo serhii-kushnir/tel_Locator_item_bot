@@ -18,7 +18,7 @@ public class BotCommandHouse {
         this.houseService = houseService;
     }
 
-    public Mono<String> create(String message) {
+    public Mono<String> create(final String message) {
         String[] parts = message.substring("/house/create ".length()).split(";");
         if (parts.length != 2) {
             return Mono.just("Невірний формат команди. Використовуйте: /house/create [name];[address]");
@@ -33,7 +33,7 @@ public class BotCommandHouse {
                 .defaultIfEmpty("Не вдалося створити будинок.");
     }
 
-    public Mono<String> edit(String message) {
+    public Mono<String> edit(final String message) {
         String[] parts = message.substring("/house/edit ".length()).split(";");
         if (parts.length != 3) {
             return Mono.just("Невірний формат команди. Використовуйте: /house/edit [id];[name];[address]");
@@ -57,7 +57,7 @@ public class BotCommandHouse {
         }
     }
 
-    public Mono<String> delete(String message) {
+    public Mono<String> delete(final String message) {
         String[] parts = message.substring("/house/delete ".length()).split(";");
         if (parts.length != 1) {
             return Mono.just("Невірний формат команди. Використовуйте: /house/delete [id]");
@@ -74,7 +74,7 @@ public class BotCommandHouse {
     }
 
 
-    public Mono<String> getById(String message) {
+    public Mono<String> getById(final String message) {
         String[] parts = message.substring("/house".length()).split(";");
         if (parts.length != 1) {
             return Mono.just("Невірний формат команди. Використовуйте: /house [id]");

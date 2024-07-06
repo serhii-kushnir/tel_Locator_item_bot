@@ -19,7 +19,7 @@ public class HouseService {
         this.webClient = webClient;
     }
 
-    public Mono<House> createHouse(House house) {
+    public Mono<House> createHouse(final House house) {
         return webClient.post()
                 .uri(PREFIX_HOUSE + "create")
                 .body(Mono.just(house), House.class)
@@ -35,14 +35,14 @@ public class HouseService {
                 .map(Arrays::asList);
     }
 
-    public Mono<House> getHouseById(Long id) {
+    public Mono<House> getHouseById(final Long id) {
         return webClient.get()
                 .uri(PREFIX_HOUSE + id)
                 .retrieve()
                 .bodyToMono(House.class);
     }
 
-    public Mono<House> editHouseById(House house, Long id) {
+    public Mono<House> editHouseById(final House house, final Long id) {
         return webClient.post()
                 .uri(PREFIX_HOUSE + "edit/" + id)
                 .body(Mono.just(house), House.class)
@@ -50,7 +50,7 @@ public class HouseService {
                 .bodyToMono(House.class);
     }
 
-    public Mono<Void> deleteHouseById(Long id) {
+    public Mono<Void> deleteHouseById(final Long id) {
         return webClient.post()
                 .uri(PREFIX_HOUSE + "delete/" + id)
                 .retrieve()

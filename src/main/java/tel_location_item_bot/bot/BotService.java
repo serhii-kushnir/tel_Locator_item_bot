@@ -16,7 +16,7 @@ public class BotService {
         this.botCommandHouseHandler = botCommandHouseHandler;
     }
 
-    public Mono<String> processMessage(String messageText) {
+    public Mono<String> processMessage(final String messageText) {
         if (messageText.equals("/start")) {
             return Mono.just("Вітаю! Це ваш Telegram бот для управлінням предметів");
         }
