@@ -27,7 +27,7 @@ public class BoxHandler {
             case PREFIX_BOX + "create" -> boxCommand.create("/box/create " + arguments);
             case "/box" -> boxCommand.getById("/box " + arguments);
             case PREFIX_BOX + "edit" -> boxCommand.edit("/box/edit " + arguments);
-//            case PREFIX_BOX + "delete" -> boxCommand.delete("/box/delete " + arguments);
+            case PREFIX_BOX + "delete" -> boxCommand.delete("/box/delete " + arguments);
             default -> Mono.just("Невідома команда для /box");
         };
     }

@@ -41,7 +41,7 @@ public class BoxService {
     }
 
     public Mono<Void> deleteBoxById(final Long id) {
-        return webClient.delete()
+        return webClient.post()
                 .uri(PREFIX_BOX + "delete/" + id)
                 .retrieve()
                 .bodyToMono(Void.class);

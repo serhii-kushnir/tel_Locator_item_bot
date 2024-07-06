@@ -93,4 +93,17 @@ public class BoxCommand {
                 .defaultIfEmpty("Не вдалося знайти комірку для редагування.");
     }
 
+    public Mono<String> delete(final String message) {
+        String roomIdStr = message.substring("/box/delete ".length()).trim();
+
+        long boxId;
+        try {
+            boxId = Long.parseLong(roomIdStr);
+        } catch (NumberFormatException e) {
+            return Mono.just("Невірний формат ID комірки для видалення.");
+        }
+
+        return boxService.deleteBoxById(boxId)
+                .then(Mono.just("Комірка з ID " + boxId + " видалена."));
+    }
 }
