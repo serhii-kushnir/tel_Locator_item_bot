@@ -16,7 +16,7 @@ public class BotController extends TelegramLongPollingBot {
 
     @Autowired
     private BotService botService;
-
+    
     @Override
     public String getBotToken() {
         return botConfig.getBotToken();
