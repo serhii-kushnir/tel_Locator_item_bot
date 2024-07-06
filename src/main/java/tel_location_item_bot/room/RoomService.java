@@ -18,10 +18,10 @@ public class RoomService {
         this.webClient = webClient;
     }
 
-    public Mono<Room> createRoom(final Room room) {
+    public Mono<Room> createRoom(final RoomDTO roomDTO) {
         return webClient.post()
                 .uri(PREFIX_ROOM + "create")
-                .body(Mono.just(room), Room.class)
+                .body(Mono.just(roomDTO), RoomDTO.class)
                 .retrieve()
                 .bodyToMono(Room.class);
     }

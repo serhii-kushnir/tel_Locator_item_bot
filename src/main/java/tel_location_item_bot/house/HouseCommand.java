@@ -28,7 +28,7 @@ public class HouseCommand {
         newHouse.setAddress(parts[1].trim());
 
         return houseService.createHouse(newHouse)
-                .map(House::toString)
+                .map(house -> "Дім створено: " + house.toString())
                 .defaultIfEmpty("Не вдалося створити будинок.");
     }
 
