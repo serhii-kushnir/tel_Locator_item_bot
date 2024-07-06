@@ -27,7 +27,7 @@ public class RoomHandler {
             case PREFIX_ROOM + "create" -> roomCommand.create("/room/create " + arguments);
             case "/room" -> roomCommand.getById("/room " + arguments);
             case "/room/edit" -> roomCommand.edit("/room/edit " + arguments);
-//            case "/room/delete" -> roomCommand.delete("/room/delete " + arguments);
+            case "/room/delete" -> roomCommand.delete("/room/delete " + arguments);
             default -> Mono.just("Невідома команда для /room");
         };
     }

@@ -92,4 +92,18 @@ public class RoomCommand {
                 .map(room -> "Кімната з ID " + room.getId() + " відредагована: " + room.toString())
                 .defaultIfEmpty("Не вдалося знайти кімнату для редагування.");
     }
+
+    public Mono<String> delete(final String message) {
+        String roomIdStr = message.substring("/room/delete ".length()).trim();
+
+        long roomId;
+        try {
+            roomId = Long.parseLong(roomIdStr);
+        } catch (NumberFormatException e) {
+            return Mono.just("Невірний формат ID кімнати для видалення.");
+        }
+
+        return roomService.deleteRoomById(roomId)
+                .then(Mono.just("Кімната з ID " + roomId + " видалена."));
+    }
 }
