@@ -8,6 +8,8 @@ public final class Constant {
 
     public static final String PREFIX_BOX = "/box/";
 
+    public static final String PREFIX_ITEM = "/item/";
+
     private Constant() {
     }
 

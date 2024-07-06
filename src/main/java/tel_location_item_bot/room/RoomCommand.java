@@ -13,7 +13,7 @@ public class RoomCommand {
     private final RoomService roomService;
 
     @Autowired
-    public RoomCommand(RoomService roomService) {
+    public RoomCommand(final RoomService roomService) {
         this.roomService = roomService;
     }
 
