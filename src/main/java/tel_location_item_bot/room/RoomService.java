@@ -7,12 +7,12 @@ import reactor.core.publisher.Mono;
 import java.util.Arrays;
 import java.util.List;
 
+import static tel_location_item_bot.utility.Constant.PREFIX_ROOM;
+
 @Service
 public class RoomService {
 
     private final WebClient webClient;
-
-    private static final String PREFIX_ROOM = "/room/";
 
     public RoomService(final WebClient webClient) {
         this.webClient = webClient;

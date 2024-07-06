@@ -10,4 +10,9 @@ public class House {
     private String name;
 
     private String address;
+
+    @Override
+    public String toString() {
+        return "id  " + id + "  -  " + name  + "  ->  " + address;
+    }
 }

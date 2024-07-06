@@ -1,22 +1,19 @@
-package tel_location_item_bot.bot.command.house;
+package tel_location_item_bot.house;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import reactor.core.publisher.Mono;
 
-import tel_location_item_bot.house.House;
-import tel_location_item_bot.house.HouseService;
-
 import java.util.stream.Collectors;
 
 @Component
-public class BotCommandHouse {
+public class HouseCommand {
 
     private final HouseService houseService;
 
     @Autowired
-    public BotCommandHouse(HouseService houseService) {
+    public HouseCommand(HouseService houseService) {
         this.houseService = houseService;
     }
 

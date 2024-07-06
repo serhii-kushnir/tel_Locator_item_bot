@@ -14,10 +14,6 @@ public class Room {
 
     @Override
     public String toString() {
-        return "Room{" +
-                "id=" + id +
-                ", name='" + (name != null ? name : "Unknown") + '\'' +
-                ", house=" + (house != null ? house.getName() : "None") +
-                '}';
+        return "id  " + id + "  -  " + name  + "  ->  " + house.getName();
     }
 }

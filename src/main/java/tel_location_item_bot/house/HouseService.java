@@ -8,12 +8,12 @@ import reactor.core.publisher.Mono;
 import java.util.Arrays;
 import java.util.List;
 
+import static tel_location_item_bot.utility.Constant.PREFIX_HOUSE;
+
 @Service
 public class HouseService {
 
     private final WebClient webClient;
-
-    private static final String PREFIX_HOUSE = "/house/";
 
     public HouseService(WebClient webClient) {
         this.webClient = webClient;
