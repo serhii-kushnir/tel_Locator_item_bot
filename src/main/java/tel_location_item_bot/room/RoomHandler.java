@@ -23,11 +23,11 @@ public class RoomHandler {
         String arguments = parts.length > 1 ? parts[1] : "";
 
         return switch (command) {
-            case PREFIX_ROOM + "list" -> roomCommand.getListRooms();
+            case PREFIX_ROOM + "list" -> roomCommand.getList();
             case PREFIX_ROOM + "create" -> roomCommand.create("/room/create " + arguments);
             case "/room" -> roomCommand.getById("/room " + arguments);
-//            case "/room/edit" -> roomCommand.edit("/room/edit " + arguments);
-//            case "/room/delete" -> roomCommand.delete("/room/delete " + arguments);
+            case "/room/edit" -> roomCommand.edit("/room/edit " + arguments);
+            case "/room/delete" -> roomCommand.delete("/room/delete " + arguments);
             default -> Mono.just("Невідома команда для /room");
         };
     }

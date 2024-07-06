@@ -41,10 +41,10 @@ public class RoomService {
                 .bodyToMono(Room.class);
     }
 
-    public Mono<Room> editRoomById(final Room room, final Long id) {
+    public Mono<Room> editRoomById(final RoomDTO roomDTO, final Long id) {
         return webClient.post()
                 .uri(PREFIX_ROOM + "edit/" + id)
-                .body(Mono.just(room), Room.class)
+                .body(Mono.just(roomDTO), Room.class)
                 .retrieve()
                 .bodyToMono(Room.class);
     }
