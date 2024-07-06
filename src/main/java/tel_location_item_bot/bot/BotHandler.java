@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import reactor.core.publisher.Mono;
+import tel_location_item_bot.box.BoxHandler;
 import tel_location_item_bot.house.HouseHandler;
 import tel_location_item_bot.room.RoomHandler;
 
@@ -12,11 +13,15 @@ public class BotHandler {
 
     private final HouseHandler houseHandler;
     private final RoomHandler roomHandler;
+    private final BoxHandler boxHandler;
 
     @Autowired
-    public BotHandler(final HouseHandler houseHandler, final RoomHandler roomHandler) {
+    public BotHandler(final HouseHandler houseHandler,
+                      final RoomHandler roomHandler,
+                      final BoxHandler boxHandler) {
         this.houseHandler = houseHandler;
         this.roomHandler = roomHandler;
+        this.boxHandler = boxHandler;
     }
 
     public Mono<String> processMessage(final String messageText) {
@@ -30,6 +35,10 @@ public class BotHandler {
 
         if (messageText.startsWith("/room")) {
             return roomHandler.handler(messageText);
+        }
+
+        if (messageText.startsWith("/box")) {
+            return boxHandler.handler(messageText);
         }
 
         return Mono.just("Невідома команда");
