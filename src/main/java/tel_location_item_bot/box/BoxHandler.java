@@ -23,7 +23,7 @@ public class BoxHandler {
         String arguments = parts.length > 1 ? parts[1] : "";
 
         return switch (command) {
-//            case PREFIX_BOX + "list" -> boxCommand.getList();
+            case PREFIX_BOX + "list" -> boxCommand.getList();
             case PREFIX_BOX + "create" -> boxCommand.create("/box/create " + arguments);
 //            case "/room" -> boxCommand.getById("/room " + arguments);
 //            case PREFIX_BOX + "edit" -> boxCommand.edit("/room/edit " + arguments);

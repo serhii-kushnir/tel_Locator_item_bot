@@ -3,8 +3,13 @@ package tel_location_item_bot.box;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import tel_location_item_bot.room.Room;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static tel_location_item_bot.utility.Constant.PREFIX_BOX;
+import static tel_location_item_bot.utility.Constant.PREFIX_ROOM;
 
 @Service
 public class BoxService {
@@ -42,5 +47,13 @@ public class BoxService {
                 .uri(PREFIX_BOX + "delete/" + id)
                 .retrieve()
                 .bodyToMono(Void.class);
+    }
+
+    public Mono<List<Box>> getListBoxes() {
+        return webClient.get()
+                .uri(PREFIX_BOX + "list")
+                .retrieve()
+                .bodyToMono(Box[].class)
+                .map(Arrays::asList);
     }
 }

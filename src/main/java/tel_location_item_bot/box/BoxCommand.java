@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 
 import reactor.core.publisher.Mono;
 
+import java.util.stream.Collectors;
+
 @Component
 public class BoxCommand {
 
@@ -37,4 +39,10 @@ public class BoxCommand {
                 .defaultIfEmpty("Не вдалося створити комірку.");
     }
 
+    public Mono<String> getList() {
+        return boxService.getListBoxes()
+                .map(boxes -> boxes.stream()
+                        .map(Box::toString)
+                        .collect(Collectors.joining("\n")));
+    }
 }
