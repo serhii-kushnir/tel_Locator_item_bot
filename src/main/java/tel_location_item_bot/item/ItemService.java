@@ -22,7 +22,7 @@ public class ItemService {
     public Mono<Item> createItem(final ItemDTO itemDTO) {
         return webClient.post()
                 .uri(PREFIX_ITEM + "create")
-                .body(Mono.just(itemDTO), Item.class)
+                .body(Mono.just(itemDTO), ItemDTO.class)
                 .retrieve()
                 .bodyToMono(Item.class);
     }

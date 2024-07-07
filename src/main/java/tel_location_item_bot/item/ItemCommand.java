@@ -13,7 +13,6 @@ import tel_location_item_bot.room.RoomService;
 
 import java.util.stream.Collectors;
 
-
 @Component
 public class ItemCommand {
 
@@ -54,4 +53,50 @@ public class ItemCommand {
                         .collect(Collectors.joining("\n")));
     }
 
+    public Mono<String> getById(final String message) {
+        String[] parts = message.substring("/item ".length()).split(";");
+        if (parts.length != 1) {
+            return Mono.just("Невірний формат команди. Використовуйте: /item [id]");
+        }
+
+        try {
+            Long id = Long.parseLong(parts[0].trim());
+
+            return itemService.getItemById(id)
+                    .map(Item::toString)
+                    .defaultIfEmpty("Предмет з ID " + id + " не знайдено.");
+        } catch (NumberFormatException e) {
+            return Mono.just("Некоректний /item ID.");
+        }
+    }
+
+    public Mono<String> create(final String message) {
+        String[] parts = message.substring("/item/create ".length()).split(";");
+        if (parts.length != 5) {
+            return Mono.just("Невірний формат команди. Використовуйте: /item/create [name];[description];[quantity];[room id];[box id]");
+        }
+
+        long roomId;
+        long boxId;
+        int quantity;
+
+        try {
+            roomId = Long.parseLong(parts[3].trim());
+            boxId = Long.parseLong(parts[4].trim());
+            quantity = Integer.parseInt(parts[2].trim());
+        } catch (NumberFormatException e) {
+            return Mono.just("Невірний формат ID кімнати або ID коробки або кількості.");
+        }
+
+        ItemDTO newItemDTO = new ItemDTO();
+        newItemDTO.setName(parts[0].trim());
+        newItemDTO.setDescription(parts[1].trim());
+        newItemDTO.setQuantity(quantity);
+        newItemDTO.setRoomId(roomId);
+        newItemDTO.setBoxId(boxId);
+
+        return itemService.createItem(newItemDTO)
+                .map(item -> "Предмет створений: " + item.toString())
+                .defaultIfEmpty("Не вдалося створити предмет.");
+    }
 }
