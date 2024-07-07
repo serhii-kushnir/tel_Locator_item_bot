@@ -63,7 +63,16 @@ public class ItemCommand {
             Long id = Long.parseLong(parts[0].trim());
 
             return itemService.getItemById(id)
-                    .map(Item::toString)
+                    .flatMap(item -> {
+                        Mono<Room> roomMono = item.getRoomId() != null ? roomService.getRoomById(item.getRoomId()) : Mono.just(null);
+                        Mono<Box> boxMono = item.getBoxId() != null ? boxService.getBoxById(item.getBoxId()) : Mono.just(null);
+
+                        return Mono.zip(roomMono, boxMono, (room, box) -> {
+                            item.setRoom(room);
+                            item.setBox(box);
+                            return item.toStringById();
+                        });
+                    })
                     .defaultIfEmpty("Предмет з ID " + id + " не знайдено.");
         } catch (NumberFormatException e) {
             return Mono.just("Некоректний /item ID.");
