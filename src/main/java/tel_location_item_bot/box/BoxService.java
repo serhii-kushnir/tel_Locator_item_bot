@@ -13,7 +13,8 @@ import static tel_location_item_bot.utility.Constant.PREFIX_BOX;
 public class BoxService {
 
     private final WebClient webClient;
-    public BoxService(WebClient webClient) {
+
+    public BoxService(final WebClient webClient) {
         this.webClient = webClient;
     }
 
