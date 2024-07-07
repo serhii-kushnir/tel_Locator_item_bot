@@ -99,4 +99,37 @@ public class ItemCommand {
                 .map(item -> "Предмет створений: " + item.toString())
                 .defaultIfEmpty("Не вдалося створити предмет.");
     }
+
+    public Mono<String> edit(final String message) {
+        String[] parts = message.substring("/item/edit ".length()).split(";");
+        if (parts.length != 6) {
+            return Mono.just("Невірний формат команди. Використовуйте: /item/edit [id];[name];[description];[quantity];[room id];[box id]");
+        }
+
+        long id;
+        long roomId;
+        long boxId;
+        int quantity;
+
+        try {
+            id = Long.parseLong(parts[0].trim());
+            roomId = Long.parseLong(parts[4].trim());
+            boxId = Long.parseLong(parts[5].trim());
+            quantity = Integer.parseInt(parts[3].trim());
+        } catch (NumberFormatException e) {
+            return Mono.just("Невірний формат ID предмета, ID кімнати, ID коробки або кількості.");
+        }
+
+        ItemDTO editdItemDTO = new ItemDTO();
+        editdItemDTO.setId(id);
+        editdItemDTO.setName(parts[1].trim());
+        editdItemDTO.setDescription(parts[2].trim());
+        editdItemDTO.setQuantity(quantity);
+        editdItemDTO.setRoomId(roomId);
+        editdItemDTO.setBoxId(boxId);
+
+        return itemService.editItemById(editdItemDTO, id)
+                .map(item -> "Предмет оновлений: " + item.toString())
+                .defaultIfEmpty("Не вдалося оновити предмет.");
+    }
 }
