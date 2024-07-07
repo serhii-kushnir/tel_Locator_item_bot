@@ -132,4 +132,22 @@ public class ItemCommand {
                 .map(item -> "Предмет оновлений: " + item.toString())
                 .defaultIfEmpty("Не вдалося оновити предмет.");
     }
+
+    public Mono<String> delete(final String message) {
+        String[] parts = message.split(" ");
+        if (parts.length != 2) {
+            return Mono.just("Невірний формат команди. Використовуйте: /item/delete [id]");
+        }
+
+        long id;
+        try {
+            id = Long.parseLong(parts[1].trim());
+        } catch (NumberFormatException e) {
+            return Mono.just("Невірний формат ID предмета.");
+        }
+
+        return itemService.deleteItemById(id)
+                .thenReturn("Предмет видалено: ID " + id)
+                .defaultIfEmpty("Не вдалося видалити предмет.");
+    }
 }

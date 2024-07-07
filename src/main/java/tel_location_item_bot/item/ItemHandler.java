@@ -27,7 +27,7 @@ public class ItemHandler {
             case PREFIX_ITEM + "create" -> itemCommand.create("/item/create " + arguments);
             case "/item" -> itemCommand.getById("/item " + arguments);
             case PREFIX_ITEM + "edit" -> itemCommand.edit("/item/edit " + arguments);
-//            case PREFIX_ITEM + "delete" -> itemCommand.delete("/item/delete " + arguments);
+            case PREFIX_ITEM + "delete" -> itemCommand.delete("/item/delete " + arguments);
             default -> Mono.just("Невідома команда для /item");
         };
     }
