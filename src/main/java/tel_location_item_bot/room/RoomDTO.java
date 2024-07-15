@@ -2,6 +2,8 @@ package tel_location_item_bot.room;
 
 import lombok.Data;
 
+import tel_location_item_bot.house.HouseDTO;
+
 @Data
 public class RoomDTO {
 
@@ -9,5 +11,5 @@ public class RoomDTO {
 
     private String name;
 
-    private Long houseId;
+    private HouseDTO house;
 }

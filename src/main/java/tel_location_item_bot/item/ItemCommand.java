@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import tel_location_item_bot.box.Box;
-import tel_location_item_bot.box.BoxService;
+import tel_location_item_bot.cell.Cell;
+import tel_location_item_bot.cell.CellService;
 import tel_location_item_bot.room.Room;
 import tel_location_item_bot.room.RoomService;
 
@@ -18,15 +18,15 @@ public class ItemCommand {
 
     private final ItemService itemService;
     private final RoomService roomService;
-    private final BoxService boxService;
+    private final CellService cellService;
 
     @Autowired
     public ItemCommand(final ItemService itemService,
                        final RoomService roomService,
-                       final BoxService boxService) {
+                       final CellService cellService) {
         this.itemService = itemService;
         this.roomService = roomService;
-        this.boxService = boxService;
+        this.cellService = cellService;
     }
 
     public Mono<String> getList() {
@@ -37,13 +37,13 @@ public class ItemCommand {
                             roomService.getRoomById(item.getRoomId()) :
                             Mono.just(null);
 
-                    Mono<Box> boxMono = item.getBoxId() != null ?
-                            boxService.getBoxById(item.getBoxId()) :
+                    Mono<Cell> boxMono = item.getBoxId() != null ?
+                            cellService.getCellById(item.getBoxId()) :
                             Mono.just(null);
 
-                    return Mono.zip(roomMono, boxMono, (room, box) -> {
+                    return Mono.zip(roomMono, boxMono, (room, cell) -> {
                         item.setRoom(room);
-                        item.setBox(box);
+                        item.setCell(cell);
                         return item;
                     });
                 })
@@ -65,11 +65,11 @@ public class ItemCommand {
             return itemService.getItemById(id)
                     .flatMap(item -> {
                         Mono<Room> roomMono = item.getRoomId() != null ? roomService.getRoomById(item.getRoomId()) : Mono.just(null);
-                        Mono<Box> boxMono = item.getBoxId() != null ? boxService.getBoxById(item.getBoxId()) : Mono.just(null);
+                        Mono<Cell> boxMono = item.getBoxId() != null ? cellService.getCellById(item.getBoxId()) : Mono.just(null);
 
-                        return Mono.zip(roomMono, boxMono, (room, box) -> {
+                        return Mono.zip(roomMono, boxMono, (room, cell) -> {
                             item.setRoom(room);
-                            item.setBox(box);
+                            item.setCell(cell);
                             return item.toStringById();
                         });
                     })

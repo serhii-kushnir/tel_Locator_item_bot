@@ -1,11 +1,11 @@
-package tel_location_item_bot.box;
+package tel_location_item_bot.cell;
 
 import lombok.Data;
 
 import tel_location_item_bot.room.Room;
 
 @Data
-public class Box {
+public class Cell {
 
     private Long id;
 
