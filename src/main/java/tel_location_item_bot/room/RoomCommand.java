@@ -102,7 +102,7 @@ public class RoomCommand {
                     editedRoomDTO.setHouse(HouseDTO.fromEntity(house));
 
                     return roomService.editRoomById(editedRoomDTO, roomId)
-                            .map(room -> "Кімната з ID " + room.getId() + " відредагована: " + room.toString())
+                            .map(room -> "Кімната з ID " + room.getId() + " відредагована: " + room)
                             .defaultIfEmpty("Не вдалося знайти кімнату для редагування.");
                 })
                 .defaultIfEmpty("Дім з ID " + houseId + " не знайдений.");

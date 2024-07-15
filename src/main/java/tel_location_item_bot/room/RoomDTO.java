@@ -12,4 +12,13 @@ public class RoomDTO {
     private String name;
 
     private HouseDTO house;
+
+    public static RoomDTO fromEntity(final Room room) {
+        RoomDTO roomDTO = new RoomDTO();
+        roomDTO.setId(room.getId());
+        roomDTO.setName(room.getName());
+        roomDTO.setHouse(HouseDTO.fromEntity(room.getHouse()));
+
+        return roomDTO;
+    }
 }

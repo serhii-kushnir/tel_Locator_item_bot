@@ -24,9 +24,9 @@ public class CellHandler {
 
         return switch (command) {
             case PREFIX_CELL + "list" -> cellCommand.getList();
-//            case PREFIX_CELL + "create" -> cellCommand.create("/cell/create " + arguments);
-//            case "/cell" -> cellCommand.getById("/cell " + arguments);
-//            case PREFIX_CELL + "edit" -> cellCommand.edit("/cell/edit " + arguments);
+            case PREFIX_CELL + "create" -> cellCommand.create("/cell/create " + arguments);
+            case "/cell" -> cellCommand.getById("/cell " + arguments);
+            case PREFIX_CELL + "edit" -> cellCommand.edit("/cell/edit " + arguments);
             case PREFIX_CELL + "delete" -> cellCommand.delete("/cell/delete " + arguments);
             default -> Mono.just("Невідома команда для /cell");
         };
