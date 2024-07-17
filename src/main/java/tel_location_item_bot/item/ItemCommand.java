@@ -3,12 +3,13 @@ package tel_location_item_bot.item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import tel_location_item_bot.box.Box;
-import tel_location_item_bot.box.BoxService;
+import tel_location_item_bot.cell.Cell;
+import tel_location_item_bot.cell.CellDTO;
+import tel_location_item_bot.cell.CellService;
 import tel_location_item_bot.room.Room;
+import tel_location_item_bot.room.RoomDTO;
 import tel_location_item_bot.room.RoomService;
 
 import java.util.stream.Collectors;
@@ -18,39 +19,23 @@ public class ItemCommand {
 
     private final ItemService itemService;
     private final RoomService roomService;
-    private final BoxService boxService;
+    private final CellService cellService;
 
     @Autowired
     public ItemCommand(final ItemService itemService,
                        final RoomService roomService,
-                       final BoxService boxService) {
+                       final CellService cellService) {
         this.itemService = itemService;
         this.roomService = roomService;
-        this.boxService = boxService;
+        this.cellService = cellService;
     }
 
     public Mono<String> getList() {
         return itemService.getListItems()
-                .flatMapMany(Flux::fromIterable)
-                .flatMap(item -> {
-                    Mono<Room> roomMono = item.getRoomId() != null ?
-                            roomService.getRoomById(item.getRoomId()) :
-                            Mono.just(null);
-
-                    Mono<Box> boxMono = item.getBoxId() != null ?
-                            boxService.getBoxById(item.getBoxId()) :
-                            Mono.just(null);
-
-                    return Mono.zip(roomMono, boxMono, (room, box) -> {
-                        item.setRoom(room);
-                        item.setBox(box);
-                        return item;
-                    });
-                })
-                .collectList()
-                .map(items -> items.stream()
-                        .map(Item::toString)
-                        .collect(Collectors.joining("\n")));
+                .flatMapIterable(items -> items)
+                .map(Item::toString)
+                .collect(Collectors.joining("\n"))
+                .switchIfEmpty(Mono.just("No items found"));
     }
 
     public Mono<String> getById(final String message) {
@@ -64,12 +49,24 @@ public class ItemCommand {
 
             return itemService.getItemById(id)
                     .flatMap(item -> {
-                        Mono<Room> roomMono = item.getRoomId() != null ? roomService.getRoomById(item.getRoomId()) : Mono.just(null);
-                        Mono<Box> boxMono = item.getBoxId() != null ? boxService.getBoxById(item.getBoxId()) : Mono.just(null);
+                        Mono<Room> roomMono;
+                        Mono<Cell> cellMono;
 
-                        return Mono.zip(roomMono, boxMono, (room, box) -> {
+                        if (item.getRoom() != null) {
+                            roomMono = roomService.getRoomById(item.getRoom().getId());
+                        } else {
+                            roomMono = Mono.empty();
+                        }
+
+                        if (item.getCell() != null) {
+                            cellMono = cellService.getCellById(item.getCell().getId());
+                        } else {
+                            cellMono = Mono.empty();
+                        }
+
+                        return Mono.zip(roomMono.defaultIfEmpty(new Room()), cellMono.defaultIfEmpty(new Cell()), (room, cell) -> {
                             item.setRoom(room);
-                            item.setBox(box);
+                            item.setCell(cell);
                             return item.toStringById();
                         });
                     })
@@ -79,30 +76,37 @@ public class ItemCommand {
         }
     }
 
+
     public Mono<String> create(final String message) {
         String[] parts = message.substring("/item/create ".length()).split(";");
         if (parts.length != 5) {
-            return Mono.just("Невірний формат команди. Використовуйте: /item/create [name];[description];[quantity];[room id];[box id]");
+            return Mono.just("Невірний формат команди. Використовуйте: /item/create [name];[description];[quantity];[room id];[cell id]");
         }
 
         long roomId;
-        long boxId;
+        long cellId;
         int quantity;
 
         try {
             roomId = Long.parseLong(parts[3].trim());
-            boxId = Long.parseLong(parts[4].trim());
+            cellId = Long.parseLong(parts[4].trim());
             quantity = Integer.parseInt(parts[2].trim());
         } catch (NumberFormatException e) {
             return Mono.just("Невірний формат ID кімнати або ID коробки або кількості.");
         }
 
+        RoomDTO roomDTO = new RoomDTO();
+        roomDTO.setId(roomId);
+
+        CellDTO cellDTO = new CellDTO();
+        cellDTO.setId(cellId);
+
         ItemDTO newItemDTO = new ItemDTO();
         newItemDTO.setName(parts[0].trim());
         newItemDTO.setDescription(parts[1].trim());
         newItemDTO.setQuantity(quantity);
-        newItemDTO.setRoomId(roomId);
-        newItemDTO.setBoxId(boxId);
+        newItemDTO.setRoom(roomDTO);
+        newItemDTO.setCell(cellDTO);
 
         return itemService.createItem(newItemDTO)
                 .map(item -> "Предмет створений: " + item.toString())
@@ -112,32 +116,38 @@ public class ItemCommand {
     public Mono<String> edit(final String message) {
         String[] parts = message.substring("/item/edit ".length()).split(";");
         if (parts.length != 6) {
-            return Mono.just("Невірний формат команди. Використовуйте: /item/edit [id];[name];[description];[quantity];[room id];[box id]");
+            return Mono.just("Невірний формат команди. Використовуйте: /item/edit [id];[name];[description];[quantity];[room id];[cell id]");
         }
 
         long id;
         long roomId;
-        long boxId;
+        long cellId;
         int quantity;
 
         try {
             id = Long.parseLong(parts[0].trim());
             roomId = Long.parseLong(parts[4].trim());
-            boxId = Long.parseLong(parts[5].trim());
+            cellId = Long.parseLong(parts[5].trim());
             quantity = Integer.parseInt(parts[3].trim());
         } catch (NumberFormatException e) {
             return Mono.just("Невірний формат ID предмета, ID кімнати, ID коробки або кількості.");
         }
 
-        ItemDTO editdItemDTO = new ItemDTO();
-        editdItemDTO.setId(id);
-        editdItemDTO.setName(parts[1].trim());
-        editdItemDTO.setDescription(parts[2].trim());
-        editdItemDTO.setQuantity(quantity);
-        editdItemDTO.setRoomId(roomId);
-        editdItemDTO.setBoxId(boxId);
+        RoomDTO roomDTO = new RoomDTO();
+        roomDTO.setId(roomId);
 
-        return itemService.editItemById(editdItemDTO, id)
+        CellDTO cellDTO = new CellDTO();
+        cellDTO.setId(cellId);
+
+        ItemDTO editedItemDTO = new ItemDTO();
+        editedItemDTO.setId(id);
+        editedItemDTO.setName(parts[1].trim());
+        editedItemDTO.setDescription(parts[2].trim());
+        editedItemDTO.setQuantity(quantity);
+        editedItemDTO.setRoom(roomDTO);
+        editedItemDTO.setCell(cellDTO);
+
+        return itemService.editItemById(editedItemDTO, id)
                 .map(item -> "Предмет оновлений: " + item.toString())
                 .defaultIfEmpty("Не вдалося оновити предмет.");
     }

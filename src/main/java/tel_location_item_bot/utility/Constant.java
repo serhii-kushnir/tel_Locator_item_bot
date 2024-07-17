@@ -6,7 +6,7 @@ public final class Constant {
 
     public static final String PREFIX_HOUSE = "/house/";
 
-    public static final String PREFIX_BOX = "/box/";
+    public static final String PREFIX_CELL = "/cell/";
 
     public static final String PREFIX_ITEM = "/item/";
 
