@@ -2,42 +2,36 @@ package tel_location_item_bot.bot;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import reactor.core.publisher.Mono;
 
+import tel_location_item_bot.auth.AuthService;
 import tel_location_item_bot.cell.CellHandler;
-import tel_location_item_bot.config.AuthLoginRequest;
-import tel_location_item_bot.config.AuthResponse;
-import tel_location_item_bot.config.WebClientConfig;
 import tel_location_item_bot.house.HouseHandler;
 import tel_location_item_bot.item.ItemHandler;
 import tel_location_item_bot.room.RoomHandler;
 
 @Service
-public class BotHandler {
+public final class BotHandler {
 
     private final HouseHandler houseHandler;
     private final RoomHandler roomHandler;
     private final ItemHandler itemHandler;
     private final CellHandler cellHandler;
-    private final WebClientConfig webClientConfig;
-    private final WebClient webClient;
+    private final AuthService authService;
 
     @Autowired
     public BotHandler(final HouseHandler houseHandler,
                       final RoomHandler roomHandler,
                       final ItemHandler itemHandler,
                       final CellHandler cellHandler,
-                      final WebClientConfig webClientConfig,
-                      final WebClient webClient) {
+                      final AuthService authService
+                      ) {
         this.houseHandler = houseHandler;
         this.roomHandler = roomHandler;
         this.itemHandler = itemHandler;
         this.cellHandler = cellHandler;
-        this.webClientConfig = webClientConfig;
-        this.webClient = webClient;
+        this.authService = authService;
 
         loginAndSetJwtToken();
     }
@@ -67,12 +61,6 @@ public class BotHandler {
     }
 
     private void loginAndSetJwtToken() {
-        Mono<AuthResponse> authResponseMono = webClient.post()
-                .uri("/auth/login")
-                .body(BodyInserters.fromValue(new AuthLoginRequest("Serhii 2", "pass")))
-                .retrieve()
-                .bodyToMono(AuthResponse.class);
-
-        authResponseMono.subscribe(authResponse -> webClientConfig.setJwtToken(authResponse.getToken()), Throwable::printStackTrace);
+        authService.loginAndSetJwtToken();
     }
 }

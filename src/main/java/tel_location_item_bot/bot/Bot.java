@@ -8,15 +8,20 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Component
-public class BotController extends TelegramLongPollingBot {
+public final class Bot extends TelegramLongPollingBot {
+
+    private static final Logger logger = LoggerFactory.getLogger(Bot.class);
 
     @Autowired
     private BotConfig botConfig;
 
     @Autowired
     private BotHandler botHandler;
-    
+
     @Override
     public String getBotToken() {
         return botConfig.getBotToken();
@@ -44,10 +49,11 @@ public class BotController extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(text);
+
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            logger.error("Failed to send message to chatId {}: {}", chatId, e.getMessage());
         }
     }
 }

@@ -1,25 +1,23 @@
-package tel_location_item_bot.config;
+package tel_location_item_bot.auth;
+
+import lombok.Getter;
+import lombok.Setter;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import reactor.core.publisher.Mono;
 
+@Getter
+@Setter
 @Configuration
-public class WebClientConfig {
+public class AuthConfig {
 
     private String jwtToken;
-
-    public String getJwtToken() {
-        return jwtToken;
-    }
-
-    public void setJwtToken(String jwtToken) {
-        this.jwtToken = jwtToken;
-    }
 
     @Bean
     public WebClient webClient() {
@@ -29,7 +27,7 @@ public class WebClientConfig {
                 .build();
     }
 
-    private ExchangeFilterFunction addJwtTokenHeader() {
+    public ExchangeFilterFunction addJwtTokenHeader() {
         return ExchangeFilterFunction.ofRequestProcessor(clientRequest -> {
             if (jwtToken != null && !jwtToken.isEmpty()) {
                 return Mono.just(ClientRequest.from(clientRequest)

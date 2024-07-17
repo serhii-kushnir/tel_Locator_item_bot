@@ -5,11 +5,10 @@ import org.springframework.stereotype.Component;
 
 import reactor.core.publisher.Mono;
 
-import static tel_location_item_bot.utility.Constant.PREFIX_ITEM;
-
 @Component
 public class ItemHandler {
 
+    public static final String PREFIX_ITEM = "/item";
     private final ItemCommand itemCommand;
 
     @Autowired
@@ -22,13 +21,17 @@ public class ItemHandler {
         String command = parts[0];
         String arguments = parts.length > 1 ? parts[1] : "";
 
+        return getcommandItem(command, arguments);
+    }
+
+    private Mono<String> getcommandItem(final String command, final String arguments) {
         return switch (command) {
-            case PREFIX_ITEM + "list" -> itemCommand.getList();
-            case PREFIX_ITEM + "create" -> itemCommand.create("/item/create " + arguments);
-            case "/item" -> itemCommand.getById("/item " + arguments);
-            case PREFIX_ITEM + "edit" -> itemCommand.edit("/item/edit " + arguments);
-            case PREFIX_ITEM + "delete" -> itemCommand.delete("/item/delete " + arguments);
-            default -> Mono.just("Невідома команда для /item");
+            case PREFIX_ITEM + "/list" -> itemCommand.getList();
+            case PREFIX_ITEM + "/create" -> itemCommand.create(PREFIX_ITEM + "create " + arguments);
+            case PREFIX_ITEM -> itemCommand.getById(PREFIX_ITEM + " " + arguments);
+            case PREFIX_ITEM + "/edit" -> itemCommand.edit(PREFIX_ITEM + "edit " + arguments);
+            case PREFIX_ITEM + "/delete" -> itemCommand.delete(PREFIX_ITEM + "delete " + arguments);
+            default -> Mono.just("Невідома команда для " + PREFIX_ITEM);
         };
     }
 }

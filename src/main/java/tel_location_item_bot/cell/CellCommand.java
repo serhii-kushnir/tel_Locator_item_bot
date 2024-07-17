@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import reactor.core.publisher.Mono;
-import tel_location_item_bot.room.RoomDTO;
+
 import tel_location_item_bot.room.RoomService;
 
 import java.util.stream.Collectors;
@@ -38,9 +38,10 @@ public class CellCommand {
 
         return roomService.getRoomById(roomId)
                 .flatMap(room -> {
-                    CellDTO newCellDTO = new CellDTO();
-                    newCellDTO.setName(parts[0].trim());
-                    newCellDTO.setRoom(RoomDTO.fromEntity(room)); // Встановлюємо об'єкт кімнати
+                    CellDTO newCellDTO = CellDTO.builder()
+                            .name(parts[0].trim())
+                            .room(roomService.convertRoomToRoomDTO(room))
+                            .build();
 
                     return cellService.createCell(newCellDTO)
                             .map(cell -> "Комірка створена: " + cell.toString())
@@ -71,13 +72,14 @@ public class CellCommand {
 
         return roomService.getRoomById(roomId)
                 .flatMap(room -> {
-                    CellDTO editedCellDTO = new CellDTO();
-                    editedCellDTO.setId(cellId);
-                    editedCellDTO.setName(parts[1].trim());
-                    editedCellDTO.setRoom(RoomDTO.fromEntity(room)); // Встановлюємо об'єкт кімнати
+                    CellDTO editedCellDTO = CellDTO.builder()
+                            .id(cellId)
+                            .name(parts[1].trim())
+                            .room(roomService.convertRoomToRoomDTO(room))
+                            .build();
 
                     return cellService.editCellById(editedCellDTO, cellId)
-                            .map(cell -> "Комірка з ID " + cell.getId() + " відредагована: " + cell.toString())
+                            .map(cell -> "Комірка з ID " + cell.getId() + " відредагована: " + cell)
                             .defaultIfEmpty("Не вдалося знайти комірку для редагування.");
                 })
                 .defaultIfEmpty("Кімната з ID " + roomId + " не знайдена.");

@@ -8,11 +8,10 @@ import reactor.core.publisher.Mono;
 import java.util.Arrays;
 import java.util.List;
 
-import static tel_location_item_bot.utility.Constant.PREFIX_CELL;
-
 @Service
 public class CellService {
 
+    public static final String PREFIX_CELL = "/cell";
     private final WebClient webClient;
 
     public CellService(final WebClient webClient) {
@@ -21,7 +20,7 @@ public class CellService {
 
     public Mono<Cell> createCell(final CellDTO cellDTO) {
         return webClient.post()
-                .uri(PREFIX_CELL + "create")
+                .uri(PREFIX_CELL + "/create")
                 .body(Mono.just(cellDTO), Cell.class)
                 .retrieve()
                 .bodyToMono(Cell.class);
@@ -29,14 +28,14 @@ public class CellService {
 
     public Mono<Cell> getCellById(final Long id) {
         return webClient.get()
-                .uri(PREFIX_CELL + id)
+                .uri(PREFIX_CELL + " " +  id)
                 .retrieve()
                 .bodyToMono(Cell.class);
     }
 
     public Mono<Cell> editCellById(final CellDTO cellDTO, final Long id) {
         return webClient.post()
-                .uri(PREFIX_CELL + "edit/" + id)
+                .uri(PREFIX_CELL + "/edit/" + id)
                 .body(Mono.just(cellDTO), Cell.class)
                 .retrieve()
                 .bodyToMono(Cell.class);
@@ -44,14 +43,14 @@ public class CellService {
 
     public Mono<Void> deleteCellById(final Long id) {
         return webClient.post()
-                .uri(PREFIX_CELL + "delete/" + id)
+                .uri(PREFIX_CELL + "/delete/" + id)
                 .retrieve()
                 .bodyToMono(Void.class);
     }
 
     public Mono<List<Cell>> getListCells() {
         return webClient.get()
-                .uri(PREFIX_CELL + "list")
+                .uri(PREFIX_CELL + "/list")
                 .retrieve()
                 .bodyToMono(Cell[].class)
                 .map(Arrays::asList);
