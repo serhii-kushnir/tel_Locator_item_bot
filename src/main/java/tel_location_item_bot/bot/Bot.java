@@ -9,7 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Component
-public class BotController extends TelegramLongPollingBot {
+public class Bot extends TelegramLongPollingBot {
 
     @Autowired
     private BotConfig botConfig;
@@ -44,6 +44,7 @@ public class BotController extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(text);
+
         try {
             execute(message);
         } catch (TelegramApiException e) {
