@@ -1,8 +1,8 @@
-package tel_location_item_bot.config;
+package tel_location_item_bot.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class AuthResponse {
+public final class AuthResponse {
     
     @JsonProperty("token")
     private String token;

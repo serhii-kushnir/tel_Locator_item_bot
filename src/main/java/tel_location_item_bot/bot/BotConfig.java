@@ -1,5 +1,7 @@
 package tel_location_item_bot.bot;
 
+import lombok.Getter;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,21 +11,17 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+@Getter
 @Configuration
 public class BotConfig {
 
-    @Value("${telegram.bot.username}")
-    private String botUsername;
+    private final String botUsername;
+    private final String botToken;
 
-    @Value("${telegram.bot.token}")
-    private String botToken;
-
-    public String getBotUsername() {
-        return botUsername;
-    }
-
-    public String getBotToken() {
-        return botToken;
+    public BotConfig(@Value("${telegram.bot.username}") final String botUsername,
+                     @Value("${telegram.bot.token}") final String botToken) {
+        this.botUsername = botUsername;
+        this.botToken = botToken;
     }
 
     @Bean
@@ -33,7 +31,7 @@ public class BotConfig {
 
     @Bean
     public TelegramBotsApi telegramBotsApi() {
-        TelegramBotsApi botsApi = null;
+        TelegramBotsApi botsApi;
 
         try {
             botsApi = new TelegramBotsApi(DefaultBotSession.class);

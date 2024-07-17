@@ -1,6 +1,6 @@
-package tel_location_item_bot.config;
+package tel_location_item_bot.auth;
 
-public class AuthLoginRequest {
+public final class AuthLoginRequest {
     
     private String username;
     private String password;
