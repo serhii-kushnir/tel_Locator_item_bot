@@ -8,7 +8,10 @@ import reactor.core.publisher.Mono;
 import java.util.stream.Collectors;
 
 @Component
-public class HouseCommand {
+public final class HouseCommand {
+
+    private static final String HOUSE_ID = "Будинок з ID ";
+    private static final String INCORRECT_ID = "Некоректний формат ID.";
 
     private final HouseService houseService;
 
@@ -22,10 +25,11 @@ public class HouseCommand {
         if (parts.length != 2) {
             return Mono.just("Невірний формат команди. Використовуйте: /house/create [name];[address]");
         }
-
-        House newHouse = new House();
-        newHouse.setName(parts[0].trim());
-        newHouse.setAddress(parts[1].trim());
+        
+        House newHouse = House.builder()
+                .name(parts[0].trim())
+                .address(parts[1].trim())
+                .build();
 
         return houseService.createHouse(newHouse)
                 .map(house -> "Дім створено: " + house.toString())
@@ -43,16 +47,18 @@ public class HouseCommand {
             String name = parts[1].trim();
             String address = parts[2].trim();
 
-            House editedHouse = new House();
-            editedHouse.setId(id);
-            editedHouse.setName(name);
-            editedHouse.setAddress(address);
+            House editedHouse = House.builder()
+                    .id(id)
+                    .name(name)
+                    .address(address)
+                    .build();
+
 
             return houseService.editHouseById(editedHouse, id)
-                    .map(updatedHouse -> "Будинок з ID " + updatedHouse.getId() + " успішно відредаговано.")
+                    .map(updatedHouse -> HOUSE_ID + updatedHouse.getId() + " успішно відредаговано.")
                     .defaultIfEmpty("Не вдалося знайти будинок для редагування.");
         } catch (NumberFormatException e) {
-            return Mono.just("Некоректний формат ID.");
+            return Mono.just(INCORRECT_ID);
         }
     }
 
@@ -67,12 +73,11 @@ public class HouseCommand {
             Long id = Long.parseLong(parts[0].trim());
 
             return houseService.deleteHouseById(id)
-                    .then(Mono.just("Будинок з ID " + id + " успішно видалено."));
+                    .then(Mono.just(HOUSE_ID + id + " успішно видалено."));
         } catch (NumberFormatException e) {
-            return Mono.just("Некоректний формат ID.");
+            return Mono.just(INCORRECT_ID);
         }
     }
-
 
     public Mono<String> getById(final String message) {
         String[] parts = message.substring("/house".length()).split(";");
@@ -85,9 +90,9 @@ public class HouseCommand {
 
             return houseService.getHouseById(id)
                     .map(House::toString)
-                    .defaultIfEmpty("Будинок з ID " + id + " не знайдено.");
+                    .defaultIfEmpty(HOUSE_ID + id + " не знайдено.");
         } catch (NumberFormatException e) {
-            return Mono.just("Некоректний формат ID.");
+            return Mono.just(INCORRECT_ID);
         }
     }
 

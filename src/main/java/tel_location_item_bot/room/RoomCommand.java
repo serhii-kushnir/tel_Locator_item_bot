@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import reactor.core.publisher.Mono;
-
-import tel_location_item_bot.house.HouseDTO;
 import tel_location_item_bot.house.HouseService;
 
 import java.util.stream.Collectors;
@@ -65,7 +63,7 @@ public class RoomCommand {
                 .flatMap(house -> {
                     RoomDTO newRoomDTO = new RoomDTO();
                     newRoomDTO.setName(parts[0].trim());
-                    newRoomDTO.setHouse(HouseDTO.fromEntity(house)); // Використовуйте метод конвертації
+                    newRoomDTO.setHouse(houseService.convertHouseToHouseDTO(house)); // Використовуйте метод конвертації
 
                     return roomService.createRoom(newRoomDTO)
                             .map(room -> "Кімната створена: " + room.toString())
@@ -99,7 +97,7 @@ public class RoomCommand {
                     RoomDTO editedRoomDTO = new RoomDTO();
                     editedRoomDTO.setId(roomId);
                     editedRoomDTO.setName(parts[1].trim());
-                    editedRoomDTO.setHouse(HouseDTO.fromEntity(house));
+                    editedRoomDTO.setHouse(houseService.convertHouseToHouseDTO(house));
 
                     return roomService.editRoomById(editedRoomDTO, roomId)
                             .map(room -> "Кімната з ID " + room.getId() + " відредагована: " + room)

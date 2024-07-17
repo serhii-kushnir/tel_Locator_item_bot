@@ -12,15 +12,6 @@ import lombok.NoArgsConstructor;
 public final class HouseDTO {
 
     private Long id;
-
     private String name;
-
     private String address;
-
-    public static HouseDTO fromEntity(House house) {
-        HouseDTO houseDTO = new HouseDTO();
-        houseDTO.setId(house.getId());
-        houseDTO.setName(house.getName());
-        return houseDTO;
-    }
 }
