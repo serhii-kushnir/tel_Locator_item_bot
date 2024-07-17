@@ -6,6 +6,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static tel_location_item_bot.utility.Constant.PREFIX_ITEM;
@@ -32,8 +33,15 @@ public class ItemService {
                 .uri(PREFIX_ITEM + "list")
                 .retrieve()
                 .bodyToMono(Item[].class)
-                .map(Arrays::asList);
+                .map(items -> {
+                    if (items == null) {
+                        return Collections.emptyList(); // Обробка випадку null
+                    } else {
+                        return Arrays.asList(items);
+                    }
+                });
     }
+
 
     public Mono<Item> getItemById(final Long id) {
         return webClient.get()
