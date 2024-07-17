@@ -5,11 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import static tel_location_item_bot.utility.Constant.PREFIX_ROOM;
-
 @Component
 public class RoomHandler {
 
+    public static final String PREFIX_ROOM = "/room";
     private final RoomCommand roomCommand;
 
     @Autowired
@@ -23,12 +22,12 @@ public class RoomHandler {
         String arguments = parts.length > 1 ? parts[1] : "";
 
         return switch (command) {
-            case PREFIX_ROOM + "list" -> roomCommand.getList();
-            case PREFIX_ROOM + "create" -> roomCommand.create("/room/create " + arguments);
-            case "/room" -> roomCommand.getById("/room " + arguments);
-            case PREFIX_ROOM + "edit" -> roomCommand.edit("/room/edit " + arguments);
-            case PREFIX_ROOM + "delete" -> roomCommand.delete("/room/delete " + arguments);
-            default -> Mono.just("Невідома команда для /room");
+            case PREFIX_ROOM + "/list" -> roomCommand.getList();
+            case PREFIX_ROOM + "/create" -> roomCommand.create(PREFIX_ROOM + "/create " + arguments);
+            case PREFIX_ROOM -> roomCommand.getById(PREFIX_ROOM + " " + arguments);
+            case PREFIX_ROOM + "/edit" -> roomCommand.edit(PREFIX_ROOM + "/edit " + arguments);
+            case PREFIX_ROOM + "/delete" -> roomCommand.delete(PREFIX_ROOM + "/delete " + arguments);
+            default -> Mono.just("Невідома команда для " + PREFIX_ROOM);
         };
     }
 }

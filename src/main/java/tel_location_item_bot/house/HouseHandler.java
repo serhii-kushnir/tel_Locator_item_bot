@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 @Component
-public class HouseHandler {
+public final class HouseHandler {
 
     public static final String PREFIX_HOUSE = "/house";
     private final HouseCommand houseCommand;

@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class HouseService {
+public final class HouseService {
 
     public static final String PREFIX_HOUSE = "/house";
     private final WebClient webClient;
@@ -56,10 +56,11 @@ public class HouseService {
                 .bodyToMono(Void.class);
     }
 
-    public HouseDTO convertHouseToHouseDTO(House house) {
-        HouseDTO houseDTO = new HouseDTO();
-        houseDTO.setId(house.getId());
-        houseDTO.setName(house.getName());
-        return houseDTO;
+    public HouseDTO convertHouseToHouseDTO(final House house) {
+        return HouseDTO.builder()
+                .id(house.getId())
+                .name(house.getName())
+                .address(house.getAddress())
+                .build();
     }
 }

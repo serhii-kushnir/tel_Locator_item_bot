@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import reactor.core.publisher.Mono;
+
 import tel_location_item_bot.house.HouseService;
 
 import java.util.stream.Collectors;
@@ -32,7 +33,7 @@ public class RoomCommand {
     public Mono<String> getById(final String message) {
         String[] parts = message.substring("/room".length()).split(";");
         if (parts.length != 1) {
-            return Mono.just("Невірний формат команди. Використовуйте: /house [id]");
+            return Mono.just("Невірний формат команди. Використовуйте: /room [id]");
         }
 
         try {
@@ -56,20 +57,21 @@ public class RoomCommand {
         try {
             houseId = Long.parseLong(parts[1].trim());
         } catch (NumberFormatException e) {
-            return Mono.just("Невірний формат ID дому.");
+            return Mono.just("Невірний формат ID кімнати.");
         }
 
         return houseService.getHouseById(houseId)
                 .flatMap(house -> {
-                    RoomDTO newRoomDTO = new RoomDTO();
-                    newRoomDTO.setName(parts[0].trim());
-                    newRoomDTO.setHouse(houseService.convertHouseToHouseDTO(house)); // Використовуйте метод конвертації
+                    RoomDTO newRoomDTO = RoomDTO.builder()
+                            .name(parts[0].trim())
+                            .house(houseService.convertHouseToHouseDTO(house))
+                            .build();
 
                     return roomService.createRoom(newRoomDTO)
                             .map(room -> "Кімната створена: " + room.toString())
                             .defaultIfEmpty("Не вдалося створити кімнату.");
                 })
-                .defaultIfEmpty("Дім з ID " + houseId + " не знайдений.");
+                .defaultIfEmpty("Дім з ID " + houseId + " не знайдено.");
     }
 
     public Mono<String> edit(final String message) {
@@ -94,10 +96,11 @@ public class RoomCommand {
 
         return houseService.getHouseById(houseId)
                 .flatMap(house -> {
-                    RoomDTO editedRoomDTO = new RoomDTO();
-                    editedRoomDTO.setId(roomId);
-                    editedRoomDTO.setName(parts[1].trim());
-                    editedRoomDTO.setHouse(houseService.convertHouseToHouseDTO(house));
+                    RoomDTO editedRoomDTO = RoomDTO.builder()
+                            .id(roomId)
+                            .name(parts[1].trim())
+                            .house(houseService.convertHouseToHouseDTO(house))
+                            .build();
 
                     return roomService.editRoomById(editedRoomDTO, roomId)
                             .map(room -> "Кімната з ID " + room.getId() + " відредагована: " + room)
@@ -107,11 +110,11 @@ public class RoomCommand {
     }
 
     public Mono<String> delete(final String message) {
-        String roomIdStr = message.substring("/room/delete ".length()).trim();
+        String parseRoomId = message.substring("/room/delete ".length()).trim();
 
         long roomId;
         try {
-            roomId = Long.parseLong(roomIdStr);
+            roomId = Long.parseLong(parseRoomId);
         } catch (NumberFormatException e) {
             return Mono.just("Невірний формат ID кімнати для видалення.");
         }
