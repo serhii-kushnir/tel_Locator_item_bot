@@ -9,11 +9,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static tel_location_item_bot.utility.Constant.PREFIX_ITEM;
-
 @Service
 public class ItemService {
 
+    public static final String PREFIX_ITEM = "/item";
     private final WebClient webClient;
 
     public ItemService(final WebClient webClient) {
@@ -22,7 +21,7 @@ public class ItemService {
 
     public Mono<Item> createItem(final ItemDTO itemDTO) {
         return webClient.post()
-                .uri(PREFIX_ITEM + "create")
+                .uri(PREFIX_ITEM + "/create")
                 .body(Mono.just(itemDTO), ItemDTO.class)
                 .retrieve()
                 .bodyToMono(Item.class);
@@ -30,7 +29,7 @@ public class ItemService {
 
     public Mono<List<Item>> getListItems() {
         return webClient.get()
-                .uri(PREFIX_ITEM + "list")
+                .uri(PREFIX_ITEM + "/list")
                 .retrieve()
                 .bodyToMono(Item[].class)
                 .map(items -> {
@@ -45,14 +44,14 @@ public class ItemService {
 
     public Mono<Item> getItemById(final Long id) {
         return webClient.get()
-                .uri(PREFIX_ITEM + id)
+                .uri(PREFIX_ITEM + "/" + id)
                 .retrieve()
                 .bodyToMono(Item.class);
     }
 
     public Mono<Item> editItemById(final ItemDTO itemDTO, final Long id) {
         return webClient.post()
-                .uri(PREFIX_ITEM + "edit/" + id)
+                .uri(PREFIX_ITEM + "/edit/" + id)
                 .body(Mono.just(itemDTO), Item.class)
                 .retrieve()
                 .bodyToMono(Item.class);
@@ -60,7 +59,7 @@ public class ItemService {
 
     public Mono<Void> deleteItemById(final Long id) {
         return webClient.post()
-                .uri(PREFIX_ITEM + "delete/" + id)
+                .uri(PREFIX_ITEM + "/delete/" + id)
                 .retrieve()
                 .bodyToMono(Void.class);
     }

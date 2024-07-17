@@ -67,6 +67,7 @@ public class ItemCommand {
                         return Mono.zip(roomMono.defaultIfEmpty(new Room()), cellMono.defaultIfEmpty(new Cell()), (room, cell) -> {
                             item.setRoom(room);
                             item.setCell(cell);
+
                             return item.toString();
                         });
                     })
@@ -101,12 +102,13 @@ public class ItemCommand {
         CellDTO cellDTO = new CellDTO();
         cellDTO.setId(cellId);
 
-        ItemDTO newItemDTO = new ItemDTO();
-        newItemDTO.setName(parts[0].trim());
-        newItemDTO.setDescription(parts[1].trim());
-        newItemDTO.setQuantity(quantity);
-        newItemDTO.setRoom(roomDTO);
-        newItemDTO.setCell(cellDTO);
+        ItemDTO newItemDTO = ItemDTO.builder()
+                .name(parts[0].trim())
+                .description(parts[1].trim())
+                .quantity(quantity)
+                .room(roomDTO)
+                .cell(cellDTO)
+                .build();
 
         return itemService.createItem(newItemDTO)
                 .map(item -> "Предмет створений: " + item.toString())
@@ -139,13 +141,14 @@ public class ItemCommand {
         CellDTO cellDTO = new CellDTO();
         cellDTO.setId(cellId);
 
-        ItemDTO editedItemDTO = new ItemDTO();
-        editedItemDTO.setId(id);
-        editedItemDTO.setName(parts[1].trim());
-        editedItemDTO.setDescription(parts[2].trim());
-        editedItemDTO.setQuantity(quantity);
-        editedItemDTO.setRoom(roomDTO);
-        editedItemDTO.setCell(cellDTO);
+        ItemDTO editedItemDTO = ItemDTO.builder()
+                .id(id)
+                .name(parts[1].trim())
+                .description(parts[2].trim())
+                .quantity(quantity)
+                .room(roomDTO)
+                .cell(cellDTO)
+                .build();
 
         return itemService.editItemById(editedItemDTO, id)
                 .map(item -> "Предмет оновлений: " + item.toString())
@@ -166,7 +169,7 @@ public class ItemCommand {
         }
 
         return itemService.deleteItemById(id)
-                .thenReturn("Предмет видалено: ID " + id)
+                .thenReturn("Предмет з ID " + id + " видалено")
                 .defaultIfEmpty("Не вдалося видалити предмет.");
     }
 }
