@@ -22,26 +22,13 @@ public class Item {
 
     @Override
     public String toString() {
-        String roomName = room != null ? room.getName() : "Unknown Room";
-        String cellName = cell != null ? cell.getName() : "Unknown Cell";
+        String cellName = cell != null ? cell.getName() : "null";
 
         return "id  " + id
                 + "  -  " + name
                 + "  -  " + description
                 + "  -  " + quantity
                 + "  ->  " + cellName
-                + "  ->  " + roomName;
-    }
-
-    public String toStringById() {
-        String roomName = room != null ? room.getName() : "Unknown Room";
-        String cellName = cell != null ? cell.getName() : "Unknown Cell";
-
-        return "id  " + id
-                + "  -  " + name
-                + "  -  " + description
-                + "  -  " + quantity
-                + "  ->  " + cellName
-                + "  ->  " + roomName;
+                + "  ->  " + room.getName();
     }
 }

@@ -67,7 +67,7 @@ public class ItemCommand {
                         return Mono.zip(roomMono.defaultIfEmpty(new Room()), cellMono.defaultIfEmpty(new Cell()), (room, cell) -> {
                             item.setRoom(room);
                             item.setCell(cell);
-                            return item.toStringById();
+                            return item.toString();
                         });
                     })
                     .defaultIfEmpty("Предмет з ID " + id + " не знайдено.");
