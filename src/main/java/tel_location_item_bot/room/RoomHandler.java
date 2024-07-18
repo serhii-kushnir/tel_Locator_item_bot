@@ -24,7 +24,7 @@ public class RoomHandler {
         return getCommandRoom(command, arguments);
     }
 
-    private Mono<String> getCommandRoom(String command, String arguments) {
+    private Mono<String> getCommandRoom(final String command, final String arguments) {
         return switch (command) {
             case PREFIX_ROOM + "/list" -> roomCommand.getList();
             case PREFIX_ROOM + "/create" -> roomCommand.create(PREFIX_ROOM + "/create " + arguments);
