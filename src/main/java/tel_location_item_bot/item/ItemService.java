@@ -41,7 +41,6 @@ public class ItemService {
                 });
     }
 
-
     public Mono<Item> getItemById(final Long id) {
         return webClient.get()
                 .uri(PREFIX_ITEM + "/" + id)
