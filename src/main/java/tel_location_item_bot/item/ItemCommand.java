@@ -77,7 +77,6 @@ public class ItemCommand {
         }
     }
 
-
     public Mono<String> create(final String message) {
         String[] parts = message.substring("/item/create ".length()).split(";");
         if (parts.length != 5) {
@@ -85,22 +84,31 @@ public class ItemCommand {
         }
 
         long roomId;
-        long cellId;
         int quantity;
+        Long cellId = null;
 
         try {
             roomId = Long.parseLong(parts[3].trim());
-            cellId = Long.parseLong(parts[4].trim());
             quantity = Integer.parseInt(parts[2].trim());
+
+            String cellIdStr = parts[4].trim();
+            if (!cellIdStr.isEmpty()) {
+                cellId = Long.parseLong(cellIdStr);
+            }
         } catch (NumberFormatException e) {
-            return Mono.just("Невірний формат ID кімнати або ID коробки або кількості.");
+            return Mono.just("Невірний формат ID кімнати або кількості, або ID коробки.");
         }
 
-        RoomDTO roomDTO = new RoomDTO();
-        roomDTO.setId(roomId);
+        RoomDTO roomDTO = RoomDTO.builder()
+                .id(roomId)
+                .build();
 
-        CellDTO cellDTO = new CellDTO();
-        cellDTO.setId(cellId);
+        CellDTO cellDTO = null;
+        if (cellId != null) {
+            cellDTO = CellDTO.builder()
+                    .id(cellId)
+                    .build();
+        }
 
         ItemDTO newItemDTO = ItemDTO.builder()
                 .name(parts[0].trim())
@@ -118,42 +126,54 @@ public class ItemCommand {
     public Mono<String> edit(final String message) {
         String[] parts = message.substring("/item/edit ".length()).split(";");
         if (parts.length != 6) {
-            return Mono.just("Невірний формат команди. Використовуйте: /item/edit [id];[name];[description];[quantity];[room id];[cell id]");
+            return Mono.just("Невірний формат команди. Використовуйте: /item/edit [id];[name];[description];[quantity];[room id];[cell id - optional]");
         }
 
         long id;
         long roomId;
-        long cellId;
         int quantity;
 
         try {
             id = Long.parseLong(parts[0].trim());
             roomId = Long.parseLong(parts[4].trim());
-            cellId = Long.parseLong(parts[5].trim());
             quantity = Integer.parseInt(parts[3].trim());
         } catch (NumberFormatException e) {
-            return Mono.just("Невірний формат ID предмета, ID кімнати, ID коробки або кількості.");
+            return Mono.just("Невірний формат ID предмета, ID кімнати, або кількості.");
         }
 
         RoomDTO roomDTO = new RoomDTO();
         roomDTO.setId(roomId);
 
-        CellDTO cellDTO = new CellDTO();
-        cellDTO.setId(cellId);
+        CellDTO cellDTO = null;
+        if (!parts[5].trim().isEmpty()) {
+            try {
+                long cellId = Long.parseLong(parts[5].trim());
+                cellDTO = new CellDTO();
+                cellDTO.setId(cellId);
+            } catch (NumberFormatException e) {
+                return Mono.just("Невірний формат ID коробки.");
+            }
+        }
 
-        ItemDTO editedItemDTO = ItemDTO.builder()
+        ItemDTO.ItemDTOBuilder itemDTOBuilder = ItemDTO.builder()
                 .id(id)
                 .name(parts[1].trim())
                 .description(parts[2].trim())
                 .quantity(quantity)
-                .room(roomDTO)
-                .cell(cellDTO)
-                .build();
+                .room(roomDTO);
+
+        if (cellDTO != null) {
+            itemDTOBuilder.cell(cellDTO);
+        }
+
+        ItemDTO editedItemDTO = itemDTOBuilder.build();
 
         return itemService.editItemById(editedItemDTO, id)
                 .map(item -> "Предмет оновлений: " + item.toString())
                 .defaultIfEmpty("Не вдалося оновити предмет.");
     }
+
+
 
     public Mono<String> delete(final String message) {
         String[] parts = message.split(" ");

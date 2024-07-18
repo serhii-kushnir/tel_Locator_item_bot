@@ -28,7 +28,7 @@ public class CellService {
 
     public Mono<Cell> getCellById(final Long id) {
         return webClient.get()
-                .uri(PREFIX_CELL + " " +  id)
+                .uri(PREFIX_CELL + "/" +  id)
                 .retrieve()
                 .bodyToMono(Cell.class);
     }
