@@ -173,8 +173,6 @@ public class ItemCommand {
                 .defaultIfEmpty("Не вдалося оновити предмет.");
     }
 
-
-
     public Mono<String> delete(final String message) {
         String[] parts = message.split(" ");
         if (parts.length != 2) {
